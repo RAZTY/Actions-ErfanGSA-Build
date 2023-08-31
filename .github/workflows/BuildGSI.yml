@@ -55,7 +55,7 @@ jobs:
     - name: Download Rom & Build GSI  
       run: |  
         cd ${{ github.workspace }}/ErfanGSI  
-        aria2c --output-dir="${{ github.workspace }}/ErfanGSI" "${{ inputs.ROM_URL }}"  
+        aria2c --output-dir=${{ github.workspace }}/ErfanGSI "${{ inputs.ROM_URL }}"  
         bash ./url2GSI.sh -c --${{ inputs.BUILD_TYPE }} ${{ inputs.ROM_TYPE }}  
         
     - name: Packing GSI...  
