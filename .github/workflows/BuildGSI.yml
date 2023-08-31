@@ -65,7 +65,7 @@ jobs:
     - name: Build GSI  
       run: |  
         cd ${{ github.workspace }}/ErfanGSI  
-        bash ./url2GSI.sh -c --${{ inputs.BUILD_TYPE }} ${{ inputs.ROM_TYPE }}  
+        bash ./url2GSI.sh -c --${{ inputs.ROM_NAME }} ${{ inputs.ROM_TYPE }}  
         
     - name: Packing GSI...  
       run: |  
