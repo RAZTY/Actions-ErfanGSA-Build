@@ -52,11 +52,15 @@ jobs:
         mkdir ./output  
         sudo bash ./setup.sh  
   
-    - name: Download Rom 
-      run: |  
-        cd ${{ github.workspace }}/ErfanGSI  
-        aria2c -h --output-dir=${{ github.workspace }}/ErfanGSI "${{ inputs.ROM_URL }}"  
-        bash ./url2GSI.sh -c --${{ inputs.BUILD_TYPE }} ${{ inputs.ROM_TYPE }}  
+    - name: Download ROM Using aria2
+      run: |
+        cd ${{ github.workspace }}/ErfanGSI
+        aria2c --user-agent="Mozilla/5.0" --dir="${{ github.workspace }}/ErfanGSI" --out="${{ inputs.ROM_NAME }}" "${{ github.event.inputs.ROM_URL }}" || echo "Download failed"
+        if [[ -f "${{ github.workspace }}/ErfanGSI${{ github.event.inputs.ROM_NAME }}" ]]; then
+        echo "Zip file downloaded successfully"
+        else
+        echo "Failed to download zip file"
+        fi
 
     - name: Build GSI  
       run: |  
