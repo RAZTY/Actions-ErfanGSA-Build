@@ -1,76 +1,77 @@
-name: Build_GSI
-
-on:
-  workflow_dispatch:
-     inputs:
-       ROM_URL:
-         description: 'ROM_URL'
-         required: true
-         default: 'http://bigota.d.miui.com/20.4.27/miui_MIMIX3_20.4.27_8f7879221b_10.0.zip'
-       ROM_NAME:
-         description: 'ROM_NAME'
-         required: true
-         default: 'miui_MIMIX3_20.4.27_8f7879221b_10.0.zip'
-       ROM_TYPE:
-         description: 'ROM_TYPE'
-         required: true
-         default: 'MIUI'
-       BUILD_TYPE:
-         description: 'BUILD_TYPE'
-         required: true
-         default: 'ab'  
-       TZ:
-         description: 'TZ'
-         required: true
-         default: 'Asia/Shanghai'      
-
-
-jobs:  
-  Build_GSI:  
-    runs-on: ubuntu-20.04  
+name: Build_GSI  
   
+on:  
+ workflow_dispatch:   
+    inputs:  
+      ROM_URL:  
+        description: 'ROM_URL'  
+        required: true  
+        default: 'http://bigota.d.miui.com/20.4.27/miui_MIMIX3_20.4.27_8f7879221b_10.0.zip'  
+      ROM_NAME:  
+        description: 'ROM_NAME'  
+        required: true  
+        default: 'miui_MIMIX3_20.4.27_8f7879221b_10.0.zip'  
+      ROM_TYPE:  
+        description: 'ROM_TYPE'  
+        required: true  
+        default: 'MIUI'  
+      BUILD_TYPE:  
+        description: 'BUILD_TYPE'  
+        required: true  
+        default: 'ab'    
+      TZ:  
+        description: 'TZ'  
+        required: true  
+        default: 'Asia/Shanghai'  
+
+
+
+jobs:
+ Build_GSI:
+    runs-on: ubuntu-20.04 
+    
     steps:  
-      - name: Check out this repository...  
-        uses: actions/checkout@main  
-          
-      - name: Set up the environment...  
-        run: |  
-          sudo apt-get install -y git wget git zip unzip curl axel aria2 bc bison build-essential ccache curl flex g++-multilib gcc-multilib git gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses5 libncurses5-dev libsdl1.2-dev libssl-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc zip zlib1g-dev python2 python-is-python3 brotli  
-            
-      - name: Clone the ErfanGSI source code  
-        run: git clone --recurse-submodules https://github.com/RAZTY/ErfanGSI.git ErfanGSI  
-           
-      - name: Fix Exit    
-        run: |    
-          sed -i 's/\|\| exit 1//g' ${{ github.workspace }}/ErfanGSI/url2GSI.sh    
-          sed -i 's/exit 1//g' ${{ github.workspace }}/ErfanGSI/url2GSI.sh  
-                
-      - name: Set up requirements  
-        run: |  
-          cd ${{ github.workspace }}/ErfanGSI  
-          mkdir ./output  
-          sudo bash ./setup.sh  
+    - name: Check out this repository...  
+      uses: actions/checkout@main  
+  
+    - name: Set up the environment...  
+      run: |  
+        sudo apt-get install -y git wget git zip unzip curl axel aria2 bc bison build-essential ccache curl flex g++-multilib gcc-multilib git gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses5 libncurses5-dev libsdl1.2-dev libssl-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc zip zlib1g-dev python2 python-is-python3 brotli  
+  
+    - name: Clone the ErfanGSI source code  
+      run: git clone --recurse-submodules https://github.com/RAZTY/ErfanGSI.git ErfanGSI  
+  
+    - name: Fix Exit  
+      run: |  
+        sed -i 's/\|\| exit 1//g' ${{ github.workspace }}/ErfanGSI/url2GSI.sh  
+        sed -i 's/exit 1//g' ${{ github.workspace }}/ErfanGSI/url2GSI.sh  
+  
+    - name: Set up requirements  
+      run: |  
+        cd ${{ github.workspace }}/ErfanGSI  
+        mkdir ./output  
+        sudo bash ./setup.sh  
+  
+    - name: Download Rom & Build GSI  
+      run: |  
+        cd ${{ github.workspace }}/ErfanGSI  
+        aria2c --output-dir="${{ github.workspace }}/ErfanGSI" "${{ inputs.ROM_URL }}"  
+        bash ./url2GSI.sh -c --${{ inputs.BUILD_TYPE }} ${{ inputs.ROM_TYPE }}  
         
-      - name: Download Rom & Build GSI    
-        run: |    
-          cd ${{ github.workspace }}/ErfanGSI  
-          aria2c --output-dir="${{ github.workspace }}/ErfanGSI" "${{ ROM_URL }}"    
-          bash ./url2GSI.sh -c --${{ BUILD_TYPE }} ${{ ROM_TYPE }}  
-           
-      - name: Packing GSI...    
-        run: |    
-          cd ${{ github.workspace }}/ErfanGSI/output    
-          mkdir GSI    
-          tar -czvf ${{ BUILD_TYPE }}_${{ ROM_NAME }}.tar.gz    
-          mv ${{ BUILD_TYPE }}_${{ ROM_NAME }}.tar.gz GSI/
+    - name: Packing GSI...  
+      run: |  
+        cd ${{ github.workspace }}/ErfanGSI/output  
+        mkdir GSI  
+        tar -czvf ${{ inputs.BUILD_TYPE }}_${{ inputs.ROM_NAME }}.tar.gz ${{ inputs.ROM_NAME }}  
+        mv ${{ inputs.BUILD_TYPE }}_${{ inputs.ROM_NAME }}.tar.gz GSI/
           
-      - name: Upload to Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            $GITHUB_WORKSPACE/ErfanGSI/output/GSI/*
-          tag_name: ${{ ROM_NAME }}
-          body: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GSI }}               
+    - name: Upload to Release
+      uses: softprops/action-gh-release@v1
+      with:
+       files: |
+         $GITHUB_WORKSPACE/ErfanGSI/output/GSI/*
+       tag_name: ${{ ROM_NAME }}
+       body: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      env: 
+       GITHUB_TOKEN: ${{ secrets.GSI }}               
       
