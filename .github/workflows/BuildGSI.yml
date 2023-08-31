@@ -36,7 +36,7 @@ jobs:
   
     - name: Set up the environment...  
       run: |  
-        sudo apt-get install -y git wget git zip unzip curl axel aria2 bc biso pngcrush rsync schedtool squashfs-tools xsltproc zip zlib1g-dev python2 python-is-python3 brotli  
+        sudo apt-get install -y git wget git zip unzip curl axel aria2 pngcrush rsync schedtool squashfs-tools xsltproc zip zlib1g-dev python2 python-is-python3 brotli  
   
     - name: Clone the ErfanGSI source code  
       run: git clone --recurse-submodules https://github.com/RAZTY/ErfanGSI.git ErfanGSI  
