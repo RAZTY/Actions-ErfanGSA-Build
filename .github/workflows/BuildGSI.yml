@@ -26,7 +26,7 @@ on:
 
 
 jobs:  
-  ErfanGSIs-build:  
+  Build_GSI:  
     runs-on: ubuntu-20.04  
   
     steps:  
