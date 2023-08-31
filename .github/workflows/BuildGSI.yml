@@ -61,15 +61,15 @@ jobs:
         run: |    
           cd ${{ github.workspace }}/ErfanGSI/output    
           mkdir GSI    
-          tar -czvf ${{ BUILD_TYPE }}_{{ ROM_NAME }}.tar.gz    
-          mv ${{ BUILD_TYPE }}_{{ ROM_NAME }}.tar.gz GSI/
+          tar -czvf ${{ BUILD_TYPE }}_${{ ROM_NAME }}.tar.gz    
+          mv ${{ BUILD_TYPE }}_${{ ROM_NAME }}.tar.gz GSI/
           
       - name: Upload to Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
             $GITHUB_WORKSPACE/ErfanGSI/output/GSI/*
-          tag_name: $ROM_NAME
+          tag_name: ${{ ROM_NAME }}
           body: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         env:
           GITHUB_TOKEN: ${{ secrets.GSI }}               
