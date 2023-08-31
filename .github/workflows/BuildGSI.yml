@@ -52,10 +52,15 @@ jobs:
         mkdir ./output  
         sudo bash ./setup.sh  
   
-    - name: Download Rom & Build GSI  
+    - name: Download Rom 
       run: |  
         cd ${{ github.workspace }}/ErfanGSI  
         aria2c -h --output-dir=${{ github.workspace }}/ErfanGSI "${{ inputs.ROM_URL }}"  
+        bash ./url2GSI.sh -c --${{ inputs.BUILD_TYPE }} ${{ inputs.ROM_TYPE }}  
+
+    - name: Build GSI  
+      run: |  
+        cd ${{ github.workspace }}/ErfanGSI  
         bash ./url2GSI.sh -c --${{ inputs.BUILD_TYPE }} ${{ inputs.ROM_TYPE }}  
         
     - name: Packing GSI...  
