@@ -55,7 +55,7 @@ jobs:
     - name: Download Stock Rom & Generate GSI  
       run: |  
         cd ${{ github.workspace }}/ErfanGSI  
-        sudo bash ./url2GSI.sh -c --${{ inputs.BUILD_TYPE }} ${{ github.event.inputs.ROM_URL }} ${{ inputs.ROM_NAME }}  
+        sudo bash ./url2GSI.sh -c --${{ inputs.BUILD_TYPE }} ${{ github.event.inputs.ROM_URL }} ${{ inputs.ROM_TYPE }}  
         
     - name: Packing GSI...      
       run: |      
