@@ -57,12 +57,12 @@ jobs:
         cd ${{ github.workspace }}/ErfanGSI  
         sudo bash ./url2GSI.sh -c --${{ inputs.BUILD_TYPE }} ${{ github.event.inputs.ROM_URL }} ${{ inputs.ROM_NAME }}  
         
-    - name: Packing GSI...    
-      run: |    
-        cd ${{ github.workspace }}/ErfanGSI/output  
-        mkdir GHUT
-        tar -czvf ${{ github.workspace }}/ErfanGSI/output/GHUT/GSI.tar.gz {{ github.workspace }}/ErfanGSI/output/
-          
+    - name: Packing GSI...      
+      run: |      
+        cd ${{ github.workspace }}/ErfanGSI/output    
+        mkdir GHUT  
+        tar -czvf ${{ github.workspace }}/ErfanGSI/output/GHUT/GSI.tar.gz ErfanGSI/output/
+    
     - name: Upload to Release
       uses: softprops/action-gh-release@v1
       with:
