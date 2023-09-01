@@ -59,15 +59,22 @@ jobs:
         
     - name: Packing GSI...      
       run: |      
-        cd ${{ github.workspace }}/ErfanGSI/output    
-        mkdir GHUT  
-        tar -czvf ${{ github.workspace }}/ErfanGSI/output/GHUT/GSI.tar.gz ErfanGSI/output/
+        cd $GITHUB_WORKSPACE/ErfanGSIs/output
+        mkdir upload
+        zip -r GSI.zip ./*
+        if [[ $(du -sb "GSI.zip" | awk '{print $1}') -gt 2097152000 ]];then
+            echo -e "split packaging..."
+        tar -cpzf - "GSI.zip" | split -d -b 1024m - "upload/GSI.zip"
+        else
+        mv GSI.zip upload/
+        fi
+        ls "upload"
     
     - name: Upload to Release
       uses: softprops/action-gh-release@v1
       with:
        files: |
-         $GITHUB_WORKSPACE/ErfanGSI/output/GHUT/*
+         $GITHUB_WORKSPACE/ErfanGSI/output/upload/*
        tag_name: ${{ inputs.ROM_NAME }}
        body: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
       env: 
